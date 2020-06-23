@@ -41,7 +41,7 @@ class Game():
 		pygame.mixer.music.play()
 
 		self.plateforms = [Plateform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))]
-		self.bullets = [Bullet() for i in range(30000)]
+		self.bullets = [Bullet() for i in range(3)]
 		self.player.reset()
 		self.backgrounds = [ScollingBackground(1280), ScollingBackground(0)]
 		self.over = False
