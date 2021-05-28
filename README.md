@@ -1,2 +1,2 @@
-# Duck-Jump-2---Final-Edition-2
- 
+# Duck-Jump-2 [![CodeFactor](https://www.codefactor.io/repository/github/sigmanificient/duck-jump-2.0/badge)](https://www.codefactor.io/repository/github/sigmanificient/duck-jump-2.0)
+### A pygame platformer
