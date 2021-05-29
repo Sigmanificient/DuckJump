@@ -6,15 +6,18 @@ __release__ = "04/05/2020"
 __version__ = 2.0
 
 
-class Game():
+class Game:
+
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1280, 720))
+
         pygame.display.set_icon(load("assets/images/icon.png"))
         self.font = {size: pygame.font.Font("assets/fonts/setbackt.ttf", size) for size in (48, 64, 96, 128)}
+
         self.show_fps = True
         self.player = Player()
 
@@ -22,27 +25,35 @@ class Game():
         self.pause = False
         self.over = False
 
-        self.textures = {"bg": load("assets/images/bg.png"),
-                         "plateform": load("assets/images/plateforme.png"),
-                         "bullet": load("assets/images/bullet-bill.png")
-                         }
+        self.textures = {
+            "bg": load("assets/images/bg.png"),
+            "platform": load("assets/images/platform.png"),
+            "bullet": load("assets/images/bullet-bill.png")
+        }
 
-        self.events = {pygame.K_ESCAPE: self.pauseScreen,
-                       pygame.K_SPACE: self.player.jump,
-                       pygame.K_d: self.player.accelerate,
-                       pygame.K_a: self.player.deccelerate,
-                       pygame.K_f: self.toggle_fps
-                       }
+        self.events = {
+            pygame.K_ESCAPE: self.pause_screen,
+            pygame.K_SPACE: self.player.jump,
+            pygame.K_d: self.player.accelerate,
+            pygame.K_a: self.player.decelerate,
+            pygame.K_f: self.toggle_fps
+        }
+
+        self.platforms = []
+        self.bullets = []
+        self.backgrounds = []
+        self.limit = 4000
+        self.score = 0
 
     def setup(self):
         pygame.mixer.music.load("assets/musics/Smash_Brothers.wav")
         pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play()
 
-        self.plateforms = [Plateform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))]
-        self.bullets = [Bullet() for i in range(3)]
+        self.platforms = [Platform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))]
+        self.bullets = [Bullet() for _ in range(3)]
         self.player.reset()
-        self.backgrounds = [ScollingBackground(1280), ScollingBackground(0)]
+        self.backgrounds = [ScrollingBackground(1280), ScrollingBackground(0)]
         self.over = False
         self.limit = 4000
         self.score = 0
@@ -60,10 +71,10 @@ class Game():
                 background.update()
                 self.screen.blit(self.textures["bg"], (background.rect.x, 350), (0, 0, 1280, 360))
 
-            for plateform in self.plateforms:
-                plateform.check_hitbox()
-                plateform.move()
-                self.screen.blit(self.textures["plateform"], plateform.rect)
+            for platform in self.platforms:
+                platform.check_hit_box()
+                platform.move()
+                self.screen.blit(self.textures["platform"], platform.rect)
 
             self.player.move()
             self.player.apply_gravity()
@@ -94,20 +105,25 @@ class Game():
                     self.run = False
 
             if self.over:
-                self.OverScreen()
+                self.over_screen()
+
             else:
                 pygame.display.set_caption(
-                    f"Duck Jump 2 by Sigmanificient Corp. | score : {self.score}{' | %i Fps' % self.clock.get_fps() if self.show_fps else ''}")
+                    f"Duck Jump 2 by Sigmanificient Corp. | score : {self.score}"
+                    + f"| {self.clock.get_fps()} " * self.show_fps
+                )
+
                 pygame.display.update()
                 self.score += int(self.player.ax)
                 self.clock.tick(100)
 
-    def pauseScreen(self):
+    def pause_screen(self):
         pygame.mixer.music.pause()
         self.fade((0, 128, 255, 1), 64)
         pygame.display.set_caption("Duck Jump 2 by Sigmanificient Corp. | score : %i | Paused" % self.score)
         self.screen.blit(*get_text("Paused", self.font[96], (255, 255, 255), (640, 300), centered=True))
-        self.screen.blit(*get_text("press echap to unpause", self.font[48], (255, 255, 255), (640, 400), centered=True))
+        self.screen.blit(
+            *get_text("press escape to unpause", self.font[48], (255, 255, 255), (640, 400), centered=True))
         pygame.display.update()
 
         self.pause = True
@@ -123,7 +139,7 @@ class Game():
                 self.pause = False
                 self.run = False
 
-    def OverScreen(self):
+    def over_screen(self):
         pygame.mixer.music.pause()
         self.fade((255, 32, 32, 1), 128)
         pygame.display.set_caption("Duck Jump 2 by Sigmanificient Corp. | score : %i | GameOver" % self.score)
@@ -144,39 +160,45 @@ class Game():
                 self.run = False
 
     def fade(self, c, iterations):
-        self.alpha_layer = pygame.Surface((1280, 720), pygame.SRCALPHA)
-        self.alpha_layer.fill(c)
+        alpha_layer = pygame.Surface((1280, 720), pygame.SRCALPHA)
+        alpha_layer.fill(c)
         for iteration in range(iterations):
-            self.screen.blit(self.alpha_layer, (0, 0))
+            self.screen.blit(alpha_layer, (0, 0))
             pygame.draw.rect(self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3)
-            for e in pygame.event.get(): pass
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    break
+
             pygame.display.update()
 
 
-class Plateform:
+class Platform:
 
     def __init__(self, x, y):
-        self.rect = game.textures["plateform"].get_rect()
+        self.rect = game.textures["platform"].get_rect()
         self.rect.x, self.rect.y = x, y
         self.initial_y = self.rect.y
 
     def move(self):
         if self.rect.x < -500:
-            self.rect.x = max([plateform.rect.x for plateform in game.plateforms]) + randrange(600, 1000)
+            self.rect.x = max([platform.rect.x for platform in game.platforms]) + randrange(600, 1000)
             self.rect.y = randrange(400, 620)
             self.initial_y = self.rect.y
 
         else:
             self.rect.x -= int(game.player.ax)
 
-    def check_hitbox(self):
-        if any([self.rect.collidepoint(game.player.rect.x, game.player.rect.y + 68),
-                self.rect.collidepoint(game.player.rect.x + 50, game.player.rect.y + 68)]):
-            self.rnd = randrange(0, 2) - 1
+    def check_hit_box(self):
+        if any(
+                [
+                    self.rect.collidepoint(game.player.rect.x, game.player.rect.y + 68),
+                    self.rect.collidepoint(game.player.rect.x + 50, game.player.rect.y + 68)
+                ]
+        ):
 
             game.player.rect.y = self.rect.y - 68 + 1
             game.player.jump_count = 1
-            self.rect.x += self.rnd
+            self.rect.x += randrange(0, 2) - 1
             self.rect.y += 2
 
         else:
@@ -190,7 +212,7 @@ class Plateform:
                 game.over = True
 
 
-class ScollingBackground:
+class ScrollingBackground:
 
     def __init__(self, offset):
         self.rect = game.textures["bg"].get_rect()
@@ -284,8 +306,8 @@ class Player:
     def accelerate(self):
         self.behavior = "accelerate"
 
-    def deccelerate(self):
-        self.behavior = "deccelerate"
+    def decelerate(self):
+        self.behavior = "decelerate"
 
     def walk(self):
         self.behavior = "walk"
