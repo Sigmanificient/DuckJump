@@ -1,8 +1,6 @@
-import pygame
-from time import time
-from math import floor
-from pygame.locals import *
 from random import randrange
+
+import pygame
 
 __release__ = "04/05/2020"
 __version__ = 2.0
