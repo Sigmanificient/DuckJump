@@ -1,3 +1,6 @@
+from typing import Tuple, Dict, Callable, List
+
+import Background as Background
 import pygame
 
 from src.components.bullet import Bullet
@@ -6,42 +9,44 @@ from src.components.player import Player
 from src.components.scrolling_background import ScrollingBackground
 from src.utils import load, get_text
 
-ASSETS_DIR = "src/assets/"
-MUSIC_PATH = f"{ASSETS_DIR}musics/music.mp3"
-ICON_PATH = f"{ASSETS_DIR}images/icon.png"
-FONT_PATH = f"{ASSETS_DIR}fonts/setbackt.ttf"
+ASSETS_DIR: str = "src/assets/"
+MUSIC_PATH: str = f"{ASSETS_DIR}musics/music.mp3"
+ICON_PATH: str = f"{ASSETS_DIR}images/icon.png"
+FONT_PATH: str = f"{ASSETS_DIR}fonts/setbackt.ttf"
 
-TITLE = "Duck Jump 2"
-CAP_FPS = 100
+TITLE: str = "Duck Jump 2"
+CAP_FPS: int = 100
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
+SCREEN_WIDTH: int = 1280
+SCREEN_HEIGHT: int = 720
+SCREEN_SIZE: Tuple[int, int] = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
 class Game:
+    """The Game Controller that include core mechanics."""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialises assets, refer events and create the window."""
         pygame.init()
         pygame.mixer.init()
 
-        self.clock = pygame.time.Clock()
+        self.clock: pygame.time.Clock = pygame.time.Clock()
         
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         pygame.display.set_icon(load(ICON_PATH))
 
-        self.fonts = {
+        self.fonts: Dict[int, pygame.Font] = {
             size: pygame.font.Font(FONT_PATH, size) for size in (48, 64, 96)
         }
 
-        self.show_fps = True
-        self.player = Player()
+        self.show_fps: bool = True
+        self.player: Player = Player()
 
-        self.run = True
-        self.pause = False
-        self.over = False
+        self.run: bool = True
+        self.pause: bool = False
+        self.over: bool = False
 
-        self.events = {
+        self.events: Dict[pygame.Event, Callable[[], None]] = {
             pygame.K_ESCAPE: self.pause_screen,
             pygame.K_SPACE: self.player.jump,
             pygame.K_d: self.player.accelerate,
@@ -49,42 +54,46 @@ class Game:
             pygame.K_f: self.toggle_fps
         }
 
-        self.platforms = []
-        self.bullets = []
-        self.backgrounds = []
-        self.limit = 4000
-        self.score = 0
+        self.platforms: List[Platform] = []
+        self.bullets: List[Bullet] = []
+        self.backgrounds: List[ScrollingBackground] = []
+        self.limit: int = 4000
+        self.score: int = 0
 
-    def __del__(self):
+    def __del__(self) -> None:
+        """Quitting pygame for proper cleanup."""
         pygame.mixer.quit()
         pygame.display.quit()
         pygame.quit()
 
-    def setup(self):
+    def setup(self) -> None:
+        """Initialises a new party."""
         pygame.mixer.music.load(MUSIC_PATH)
         pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play()
 
-        self.platforms = [
+        self.platforms: List[Platform] = [
             Platform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))
         ]
 
-        self.bullets = [Bullet() for _ in range(3)]
+        self.bullets: List[Bullet] = [Bullet() for _ in range(3)]
 
-        self.backgrounds = [
+        self.backgrounds: List[ScrollingBackground] = [
             ScrollingBackground(0), ScrollingBackground(SCREEN_WIDTH)
         ]
 
         self.player.reset()
 
-        self.over = False
-        self.limit = 4000
-        self.score = 0
+        self.over: bool = False
+        self.limit: int = 4000
+        self.score: int = 0
 
-    def toggle_fps(self):
-        self.show_fps = not self.show_fps
+    def toggle_fps(self) -> None:
+        """Toggle a fps meter in the title bar."""
+        self.show_fps: bool = not self.show_fps
 
-    def update(self):
+    def update(self) -> None:
+        """The main loop content, ran each frame."""
         self.screen.fill((121, 201, 249), ((0, 0), (SCREEN_WIDTH, 360)))
         self.screen.fill((127, 173, 113), ((0, 593), SCREEN_SIZE))
 
@@ -105,7 +114,7 @@ class Game:
         self.player.apply_gravity()
 
         if self.player.above(SCREEN_HEIGHT):
-            self.over = True
+            self.over: bool = True
 
         self.screen.blit(self.player.texture, self.player.rect)
 
@@ -114,7 +123,7 @@ class Game:
             self.screen.blit(bullet.texture, bullet.rect)
 
             if bullet.check_hit_box(self.player):
-                self.over = True
+                self.over: bool = True
                 break
 
         if len(self.bullets) < 3:
@@ -124,10 +133,11 @@ class Game:
             self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3
         )
 
-    def handle_events(self):
+    def handle_events(self) -> None:
+        """A method to handle player interactions."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.run = False
+                self.run: bool = False
                 return
 
             if event.type == pygame.KEYDOWN:
@@ -141,7 +151,8 @@ class Game:
                 elif event.key in [pygame.K_a, pygame.K_d]:
                     self.player.walk()
 
-    def main(self):
+    def main(self) -> None:
+        """Game entry point."""
         self.setup()
 
         while self.run:
@@ -154,7 +165,8 @@ class Game:
             else:
                 self.draw()
 
-    def draw(self):
+    def draw(self) -> None:
+        """Refreshes the screen, update the score and title, then sync fps."""
         pygame.display.set_caption(
             f"{TITLE} | score : {self.score}"
             + (f" | {self.clock.get_fps():,.3f} " * self.show_fps)
@@ -164,7 +176,8 @@ class Game:
         self.score += int(self.player.ax)
         self.clock.tick(CAP_FPS)
 
-    def pause_screen(self):
+    def pause_screen(self) -> None:
+        """Screen show when player pause the game"""
         pygame.mixer.music.pause()
         self.fade((0, 128, 255, 1), 64)
         pygame.display.set_caption(f"{TITLE} | score: {self.score} | Paused")
@@ -189,7 +202,7 @@ class Game:
         )
         pygame.display.update()
 
-        self.pause = True
+        self.pause: bool = True
         while self.pause:
             event = pygame.event.wait()
             if event.type == pygame.KEYDOWN:
@@ -202,7 +215,8 @@ class Game:
                 self.pause = False
                 self.run = False
 
-    def over_screen(self):
+    def over_screen(self) -> None:
+        """Screen shown on player death."""
         pygame.mixer.music.pause()
         self.fade((255, 32, 32, 1), 128)
         pygame.display.set_caption(f"{TITLE} | GameOver")
@@ -229,7 +243,7 @@ class Game:
 
         pygame.display.update()
 
-        self.pause = True
+        self.pause: bool = True
         while self.pause:
             event = pygame.event.wait()
             if event.type == pygame.KEYDOWN:
@@ -241,9 +255,10 @@ class Game:
                 self.pause = False
                 self.run = False
 
-    def fade(self, c, iterations):
+    def fade(self, color: Tuple[int, int, int], iterations: int) -> None:
+        """Screen fade transition between game states."""
         alpha_layer = pygame.Surface(SCREEN_SIZE, pygame.SRCALPHA)
-        alpha_layer.fill(c)
+        alpha_layer.fill(color)
 
         for _ in range(iterations):
             self.screen.blit(alpha_layer, (0, 0))
