@@ -64,76 +64,84 @@ class Game:
     def toggle_fps(self):
         self.show_fps = not self.show_fps
 
+    def update(self):
+        self.screen.fill((121, 201, 249), ((0, 0), (1280, 360)))
+        self.screen.fill((127, 173, 113), ((0, 593), (1280, 720)))
+        for background in self.backgrounds:
+            background.update()
+            self.screen.blit(
+                background.texture,
+                (background.rect.x, 350),
+                (0, 0, 1280, 360)
+            )
+
+        for platform in self.platforms:
+            platform.check_hit_box(self)
+            platform.move(self)
+            self.screen.blit(platform.texture, platform.rect)
+
+        self.player.move()
+        self.player.apply_gravity()
+
+        if self.player.above(720):
+            self.over = True
+
+        self.screen.blit(self.player.texture, self.player.rect)
+
+        for bullet in self.bullets:
+            bullet.move(self)
+            self.screen.blit(bullet.texture, bullet.rect)
+
+            if bullet.check_hit_box(self.player):
+                self.over = True
+                break
+
+        if len(self.bullets) < 3:
+            self.bullets.append(Bullet())
+
+        pygame.draw.rect(
+            self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3
+        )
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.run = False
+                return
+
+            if event.type == pygame.KEYDOWN:
+                if event.key in self.events:
+                    self.events[event.key]()
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.player.jump_available = True
+
+                elif event.key in [pygame.K_a, pygame.K_d]:
+                    self.player.walk()
+
     def main(self):
         self.setup()
 
         while self.run:
-            self.screen.fill((121, 201, 249), ((0, 0), (1280, 360)))
-            self.screen.fill((127, 173, 113), ((0, 593), (1280, 720)))
-            for background in self.backgrounds:
-                background.update()
-                self.screen.blit(
-                    background.texture,
-                    (background.rect.x, 350),
-                    (0, 0, 1280, 360)
-                )
-
-            for platform in self.platforms:
-                platform.check_hit_box(self)
-                platform.move(self)
-                self.screen.blit(platform.texture, platform.rect)
-
-            self.player.move()
-
-            self.player.apply_gravity()
-
-            if self.player.above(720):
-                self.over = True
-
-            self.screen.blit(self.player.texture, self.player.rect)
-
-            for bullet in self.bullets:
-                bullet.move(self)
-                self.screen.blit(bullet.texture, bullet.rect)
-
-                if bullet.check_hit_box(self.player):
-                    self.over = True
-                    break
-
-            if len(self.bullets) < 3:
-                self.bullets.append(Bullet())
-
-            pygame.draw.rect(
-                self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3
-            )
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key in self.events:
-                        self.events[event.key]()
-
-                elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_SPACE:
-                        self.player.jump_available = True
-
-                    elif event.key in [pygame.K_a, pygame.K_d]:
-                        self.player.walk()
-
-                elif event.type == pygame.QUIT:
-                    self.run = False
+            self.update()
+            self.handle_events()
 
             if self.over:
                 self.over_screen()
 
             else:
-                pygame.display.set_caption(
-                    f"Duck Jump 2 | score : {self.score}"
-                    + f" | {self.clock.get_fps()} " * self.show_fps
-                )
+                self.draw()
 
-                pygame.display.update()
-                self.score += int(self.player.ax)
-                self.clock.tick(self.cap_fps)
+    def draw(self):
+        pygame.display.set_caption(
+            f"Duck Jump 2 | score : {self.score}"
+            + f" | {self.clock.get_fps()} " * self.show_fps
+        )
+
+        pygame.display.update()
+        self.score += int(self.player.ax)
+        self.clock.tick(self.cap_fps)
 
     def pause_screen(self):
         pygame.mixer.music.pause()
