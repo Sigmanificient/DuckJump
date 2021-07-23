@@ -3,6 +3,9 @@ from random import randrange
 from src.utils import load
 
 
+PLATFORM_TEXTURE_PATH = "src/assets/images/platform.png"
+
+
 class Platform:
     _texture = None
 
@@ -17,7 +20,7 @@ class Platform:
     @property
     def texture(self):
         if self._texture is None:
-            self._texture = load("src/assets/images/platform.png")
+            self._texture = load(PLATFORM_TEXTURE_PATH)
         return self._texture
 
     def move(self, game):

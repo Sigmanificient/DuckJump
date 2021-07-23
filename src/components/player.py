@@ -2,12 +2,15 @@ import pygame
 
 from src.utils import load
 
+PLAYER_SOUND_PATH = "src/assets/sounds/jump.wav"
+PLAYER_TEXTURE_PATH = "src/assets/images/duck3.png"
+
 
 class Player:
     _texture = None
 
     def __init__(self):
-        self.jump_sound = pygame.mixer.Sound("src/assets/sounds/jump.wav")
+        self.jump_sound = pygame.mixer.Sound(PLAYER_SOUND_PATH)
         self.rect = self.texture.get_rect()
         self.rect.x, self.rect.y = 300, -100
 
@@ -24,7 +27,7 @@ class Player:
     @property
     def texture(self):
         if self._texture is None:
-            self._texture = load("src/assets/images/duck3.png")
+            self._texture = load(PLAYER_TEXTURE_PATH)
         return self._texture
 
     def reset(self):

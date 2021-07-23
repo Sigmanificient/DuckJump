@@ -6,6 +6,18 @@ from src.components.player import Player
 from src.components.scrolling_background import ScrollingBackground
 from src.utils import load, get_text
 
+ASSETS_DIR = "src/assets/"
+MUSIC_PATH = f"{ASSETS_DIR}musics/music.mp3"
+ICON_PATH = f"{ASSETS_DIR}images/icon.png"
+FONT_PATH = f"{ASSETS_DIR}fonts/setbackt.ttf"
+
+TITLE = "Duck Jump 2"
+CAP_FPS = 100
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
 
 class Game:
 
@@ -14,12 +26,12 @@ class Game:
         pygame.mixer.init()
 
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1280, 720))
+        
+        self.screen = pygame.display.set_mode(SCREEN_SIZE)
+        pygame.display.set_icon(load(ICON_PATH))
 
-        pygame.display.set_icon(load("src/assets/images/icon.png"))
-        self.font = {
-            size: pygame.font.Font("src/assets/fonts/setbackt.ttf", size)
-            for size in (48, 64, 96, 128)
+        self.fonts = {
+            size: pygame.font.Font(FONT_PATH, size) for size in (48, 64, 96)
         }
 
         self.show_fps = True
@@ -43,10 +55,13 @@ class Game:
         self.limit = 4000
         self.score = 0
 
-        self.cap_fps = 100
+    def __del__(self):
+        pygame.mixer.quit()
+        pygame.display.quit()
+        pygame.quit()
 
     def setup(self):
-        pygame.mixer.music.load("src/assets/musics/music.mp3")
+        pygame.mixer.music.load(MUSIC_PATH)
         pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play()
 
@@ -55,8 +70,13 @@ class Game:
         ]
 
         self.bullets = [Bullet() for _ in range(3)]
+
+        self.backgrounds = [
+            ScrollingBackground(0), ScrollingBackground(SCREEN_WIDTH)
+        ]
+
         self.player.reset()
-        self.backgrounds = [ScrollingBackground(1280), ScrollingBackground(0)]
+
         self.over = False
         self.limit = 4000
         self.score = 0
@@ -65,14 +85,15 @@ class Game:
         self.show_fps = not self.show_fps
 
     def update(self):
-        self.screen.fill((121, 201, 249), ((0, 0), (1280, 360)))
-        self.screen.fill((127, 173, 113), ((0, 593), (1280, 720)))
+        self.screen.fill((121, 201, 249), ((0, 0), (SCREEN_WIDTH, 360)))
+        self.screen.fill((127, 173, 113), ((0, 593), SCREEN_SIZE))
+
         for background in self.backgrounds:
             background.update()
             self.screen.blit(
                 background.texture,
                 (background.rect.x, 350),
-                (0, 0, 1280, 360)
+                (0, 0, SCREEN_WIDTH, 360)
             )
 
         for platform in self.platforms:
@@ -83,7 +104,7 @@ class Game:
         self.player.move()
         self.player.apply_gravity()
 
-        if self.player.above(720):
+        if self.player.above(SCREEN_HEIGHT):
             self.over = True
 
         self.screen.blit(self.player.texture, self.player.rect)
@@ -135,25 +156,23 @@ class Game:
 
     def draw(self):
         pygame.display.set_caption(
-            f"Duck Jump 2 | score : {self.score}"
-            + f" | {self.clock.get_fps()} " * self.show_fps
+            f"{TITLE} | score : {self.score}"
+            + (f" | {self.clock.get_fps():,.3f} " * self.show_fps)
         )
 
         pygame.display.update()
         self.score += int(self.player.ax)
-        self.clock.tick(self.cap_fps)
+        self.clock.tick(CAP_FPS)
 
     def pause_screen(self):
         pygame.mixer.music.pause()
         self.fade((0, 128, 255, 1), 64)
-        pygame.display.set_caption(
-            "Duck Jump 2 | score : %i | Paused" % self.score
-        )
+        pygame.display.set_caption(f"{TITLE} | score: {self.score} | Paused")
 
         self.screen.blit(
             *get_text(
                 "Paused",
-                self.font[96],
+                self.fonts[96],
                 (255, 255, 255),
                 (640, 300),
                 centered=True)
@@ -162,7 +181,7 @@ class Game:
         self.screen.blit(
             *get_text(
                 "press escape to unpause",
-                self.font[48],
+                self.fonts[48],
                 (255, 255, 255),
                 (640, 400),
                 centered=True
@@ -186,14 +205,12 @@ class Game:
     def over_screen(self):
         pygame.mixer.music.pause()
         self.fade((255, 32, 32, 1), 128)
-        pygame.display.set_caption(
-            "Duck Jump 2 | score : %i | GameOver" % self.score
-        )
+        pygame.display.set_caption(f"{TITLE} | GameOver")
 
         self.screen.blit(
             *get_text(
                 "Game Over",
-                self.font[96],
+                self.fonts[96],
                 (255, 255, 255),
                 (640, 300),
                 centered=True
@@ -203,7 +220,7 @@ class Game:
         self.screen.blit(
             *get_text(
                 "press space to retry",
-                self.font[48],
+                self.fonts[48],
                 (255, 255, 255),
                 (640, 400),
                 centered=True
@@ -225,7 +242,7 @@ class Game:
                 self.run = False
 
     def fade(self, c, iterations):
-        alpha_layer = pygame.Surface((1280, 720), pygame.SRCALPHA)
+        alpha_layer = pygame.Surface(SCREEN_SIZE, pygame.SRCALPHA)
         alpha_layer.fill(c)
 
         for _ in range(iterations):
