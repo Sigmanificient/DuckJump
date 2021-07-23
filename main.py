@@ -1,16 +1,18 @@
+from typing import NoReturn
+
 import pygame
 
 from src.game import Game
 
-__release__ = "04/05/2020"
-__version__ = 2.0
+__release__: str = "04/05/2020"
+__version__: float = 2.0
 
 pygame.init()
 pygame.mixer.init()
 
 
-def main():
-    game = Game()
+def main() -> NoReturn:
+    game: Game = Game()
     game.main()
 
 
