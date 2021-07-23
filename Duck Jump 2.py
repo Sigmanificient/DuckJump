@@ -65,7 +65,7 @@ class Game:
         self.score = 0
 
     def toggle_fps(self):
-        self.show_fps = False if self.show_fps else True
+        self.show_fps = not self.show_fps
 
     def main(self):
         self.setup()
@@ -93,7 +93,7 @@ class Game:
             for bullet in self.bullets:
                 bullet.move()
                 self.screen.blit(game.textures["bullet"], bullet.rect)
-                bullet.check_hitbox()
+                bullet.check_hit_box()
 
             if len(self.bullets) < 3:
                 self.bullets.append(Bullet())
@@ -110,7 +110,8 @@ class Game:
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
                         self.player.jump_available = True
-                    elif event.key == pygame.K_a or event.key == pygame.K_d:
+
+                    elif event.key in [pygame.K_a, pygame.K_d]:
                         self.player.walk()
 
                 elif event.type == pygame.QUIT:
@@ -213,7 +214,8 @@ class Game:
     def fade(self, c, iterations):
         alpha_layer = pygame.Surface((1280, 720), pygame.SRCALPHA)
         alpha_layer.fill(c)
-        for iteration in range(iterations):
+
+        for _ in range(iterations):
             self.screen.blit(alpha_layer, (0, 0))
 
             pygame.draw.rect(
@@ -237,7 +239,7 @@ class Platform:
     def move(self):
         if self.rect.x < -500:
             self.rect.x = max(
-                [platform.rect.x for platform in game.platforms]
+                platform.rect.x for platform in game.platforms
             ) + randrange(600, 1000)
 
             self.rect.y = randrange(400, 620)
@@ -263,9 +265,8 @@ class Platform:
             self.rect.x += randrange(0, 2) - 1
             self.rect.y += 2
 
-        else:
-            if self.rect.y > self.initial_y:
-                self.rect.y -= 1
+        elif self.rect.y > self.initial_y:
+            self.rect.y -= 1
 
         if any(
             [
@@ -305,7 +306,7 @@ class Bullet:
         else:
             self.rect.x -= 2 * int(game.player.ax)
 
-    def check_hitbox(self):
+    def check_hit_box(self):
         if self.rect.colliderect(game.player.rect):
             print(game.player.rect)
             game.over = True
@@ -353,11 +354,10 @@ class Player:
             self.ay = -self.max_speed_y
             self.jump_count -= 1
 
-            if self.currently_in_jump:
-                self.jump_available = False
-            else:
+            if not self.currently_in_jump:
                 self.currently_in_jump = True
-                self.jump_available = False
+
+            self.jump_available = False
 
     def apply_gravity(self):
 
