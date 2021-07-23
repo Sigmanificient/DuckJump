@@ -16,7 +16,10 @@ class Game:
         self.screen = pygame.display.set_mode((1280, 720))
 
         pygame.display.set_icon(load("assets/images/icon.png"))
-        self.font = {size: pygame.font.Font("assets/fonts/setbackt.ttf", size) for size in (48, 64, 96, 128)}
+        self.font = {
+            size: pygame.font.Font("assets/fonts/setbackt.ttf", size)
+            for size in (48, 64, 96, 128)
+        }
 
         self.show_fps = True
         self.player = Player()
@@ -50,7 +53,10 @@ class Game:
         pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play()
 
-        self.platforms = [Platform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))]
+        self.platforms = [
+            Platform(x, y) for x, y in ((280, 620), (960, 640), (1620, 660))
+        ]
+
         self.bullets = [Bullet() for _ in range(3)]
         self.player.reset()
         self.backgrounds = [ScrollingBackground(1280), ScrollingBackground(0)]
@@ -69,7 +75,11 @@ class Game:
             self.screen.fill((127, 173, 113), ((0, 593), (1280, 720)))
             for background in self.backgrounds:
                 background.update()
-                self.screen.blit(self.textures["bg"], (background.rect.x, 350), (0, 0, 1280, 360))
+                self.screen.blit(
+                    self.textures["bg"],
+                    (background.rect.x, 350),
+                    (0, 0, 1280, 360)
+                )
 
             for platform in self.platforms:
                 platform.check_hit_box()
@@ -88,7 +98,9 @@ class Game:
             if len(self.bullets) < 3:
                 self.bullets.append(Bullet())
 
-            pygame.draw.rect(self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3)
+            pygame.draw.rect(
+                self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3
+            )
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -109,7 +121,7 @@ class Game:
 
             else:
                 pygame.display.set_caption(
-                    f"Duck Jump 2 by Sigmanificient Corp. | score : {self.score}"
+                    f"Duck Jump 2 | score : {self.score}"
                     + f"| {self.clock.get_fps()} " * self.show_fps
                 )
 
@@ -120,10 +132,28 @@ class Game:
     def pause_screen(self):
         pygame.mixer.music.pause()
         self.fade((0, 128, 255, 1), 64)
-        pygame.display.set_caption("Duck Jump 2 by Sigmanificient Corp. | score : %i | Paused" % self.score)
-        self.screen.blit(*get_text("Paused", self.font[96], (255, 255, 255), (640, 300), centered=True))
+        pygame.display.set_caption(
+            "Duck Jump 2 | score : %i | Paused" % self.score
+        )
+
         self.screen.blit(
-            *get_text("press escape to unpause", self.font[48], (255, 255, 255), (640, 400), centered=True))
+            *get_text(
+                "Paused",
+                self.font[96],
+                (255, 255, 255),
+                (640, 300),
+                centered=True)
+        )
+
+        self.screen.blit(
+            *get_text(
+                "press escape to unpause",
+                self.font[48],
+                (255, 255, 255),
+                (640, 400),
+                centered=True
+            )
+        )
         pygame.display.update()
 
         self.pause = True
@@ -142,9 +172,30 @@ class Game:
     def over_screen(self):
         pygame.mixer.music.pause()
         self.fade((255, 32, 32, 1), 128)
-        pygame.display.set_caption("Duck Jump 2 by Sigmanificient Corp. | score : %i | GameOver" % self.score)
-        self.screen.blit(*get_text("Game Over", self.font[96], (255, 255, 255), (640, 300), centered=True))
-        self.screen.blit(*get_text("press space to retry", self.font[48], (255, 255, 255), (640, 400), centered=True))
+        pygame.display.set_caption(
+            "Duck Jump 2 | score : %i | GameOver" % self.score
+        )
+
+        self.screen.blit(
+            *get_text(
+                "Game Over",
+                self.font[96],
+                (255, 255, 255),
+                (640, 300),
+                centered=True
+            )
+        )
+
+        self.screen.blit(
+            *get_text(
+                "press space to retry",
+                self.font[48],
+                (255, 255, 255),
+                (640, 400),
+                centered=True
+            )
+        )
+
         pygame.display.update()
 
         self.pause = True
@@ -164,7 +215,11 @@ class Game:
         alpha_layer.fill(c)
         for iteration in range(iterations):
             self.screen.blit(alpha_layer, (0, 0))
-            pygame.draw.rect(self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3)
+
+            pygame.draw.rect(
+                self.screen, (255, 255, 255), ((5, 5), (1270, 710)), 3
+            )
+
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     break
@@ -181,7 +236,10 @@ class Platform:
 
     def move(self):
         if self.rect.x < -500:
-            self.rect.x = max([platform.rect.x for platform in game.platforms]) + randrange(600, 1000)
+            self.rect.x = max(
+                [platform.rect.x for platform in game.platforms]
+            ) + randrange(600, 1000)
+
             self.rect.y = randrange(400, 620)
             self.initial_y = self.rect.y
 
@@ -191,8 +249,12 @@ class Platform:
     def check_hit_box(self):
         if any(
                 [
-                    self.rect.collidepoint(game.player.rect.x, game.player.rect.y + 68),
-                    self.rect.collidepoint(game.player.rect.x + 50, game.player.rect.y + 68)
+                    self.rect.collidepoint(
+                        game.player.rect.x, game.player.rect.y + 68
+                    ),
+                    self.rect.collidepoint(
+                        game.player.rect.x + 50, game.player.rect.y + 68
+                    )
                 ]
         ):
 
@@ -205,8 +267,16 @@ class Platform:
             if self.rect.y > self.initial_y:
                 self.rect.y -= 1
 
-        if any([self.rect.collidepoint(game.player.rect.x + 50, game.player.rect.y),
-                self.rect.collidepoint(game.player.rect.x + 50, game.player.rect.y + 66)]):
+        if any(
+            [
+                self.rect.collidepoint(
+                    game.player.rect.x + 50, game.player.rect.y
+                ),
+                self.rect.collidepoint(
+                    game.player.rect.x + 50, game.player.rect.y + 66
+                )
+            ]
+        ):
             game.player.rect.x = self.rect.x - 51
             if game.player.rect.x < 0:
                 game.over = True
@@ -271,7 +341,8 @@ class Player:
             self.ax += 0.2 if self.ax < 4 else -0.2
 
         elif self.behavior == "accelerate":
-            self.ax = self.max_speed_x if self.ax > self.max_speed_x else self.ax + 0.6
+            self.ax = self.max_speed_x \
+                if self.ax > self.max_speed_x else self.ax + 0.6
 
         else:
             self.ax = 1 if self.ax <= 1 else self.ax - 0.2
@@ -281,6 +352,7 @@ class Player:
             self.jump_sound.play()
             self.ay = -self.max_speed_y
             self.jump_count -= 1
+
             if self.currently_in_jump:
                 self.jump_available = False
             else:
@@ -314,7 +386,8 @@ class Player:
 
 
 def load(path, alpha=True):
-    return pygame.image.load(path).convert_alpha() if alpha else pygame.image.load(path).convert()
+    return pygame.image.load(path).convert_alpha() \
+        if alpha else pygame.image.load(path).convert()
 
 
 def get_text(text, font, c, pos, centered=False):
