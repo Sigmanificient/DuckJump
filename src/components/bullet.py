@@ -34,7 +34,7 @@ class Bullet:
         """Move the bullet to the left and cycle position if offscreen."""
         self.rect.x -= 2 * int(game.player.ax)
 
-        if self.rect.x - self.rect.width > 0:
+        if (self.rect.x - self.rect.width) < 0:
             self.setup()
 
     def check_hit_box(self, player: Player) -> int:
