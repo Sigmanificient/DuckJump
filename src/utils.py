@@ -11,13 +11,13 @@ def load(path: str, alpha: bool = True) -> pygame.Surface:
 
 def get_text(
         text: str,
-        font: pygame.Font,
+        font: pygame.font.Font,
         color: Tuple[int, int, int],
         position: Tuple[int, int],
         centered: bool = False
 ) -> Tuple[pygame.Surface, pygame.Rect]:
     """Return a rendered text with proper coordinates and its rect."""
-    text: pygame.Surface = font.render(text, True, color, None)
+    text: pygame.Surface = font.render(text, True, color)
     text_rect: pygame.Rect = text.get_rect()
 
     if centered:

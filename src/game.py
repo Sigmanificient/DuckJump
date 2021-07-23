@@ -1,6 +1,5 @@
 from typing import Tuple, Dict, Callable, List
 
-import Background as Background
 import pygame
 
 from src.components.bullet import Bullet
@@ -255,7 +254,7 @@ class Game:
                 self.pause = False
                 self.run = False
 
-    def fade(self, color: Tuple[int, int, int], iterations: int) -> None:
+    def fade(self, color: Tuple[int, int, int, int], iterations: int) -> None:
         """Screen fade transition between game states."""
         alpha_layer = pygame.Surface(SCREEN_SIZE, pygame.SRCALPHA)
         alpha_layer.fill(color)

@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 from random import randrange
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import pygame
 
-from src.game import Game
+if TYPE_CHECKING:
+    from src.game import Game
+
 from src.utils import load
 
 
