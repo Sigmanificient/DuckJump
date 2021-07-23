@@ -1,41 +1,48 @@
 from random import randrange
+from typing import Optional
 
+import pygame
+
+from src.game import Game
 from src.utils import load
 
 
-PLATFORM_TEXTURE_PATH = "src/assets/images/platform.png"
+PLATFORM_TEXTURE_PATH: str = "src/assets/images/platform.png"
 
 
 class Platform:
-    _texture = None
+    _texture: Optional[pygame.Surface] = None
 
-    def __init__(self, x, y):
-        self.rect = self.texture.get_rect()
+    def __init__(self, x: int, y: int) -> None:
+        """Initialises a new moving platform."""
+        self.rect: pygame.Rect = self.texture.get_rect()
 
         self.rect.x = x
         self.rect.y = y
 
-        self.initial_y = self.rect.y
+        self.initial_y: int = self.rect.y
 
     @property
-    def texture(self):
+    def texture(self) -> pygame.Surface:
+        """Load the platform texture."""
         if self._texture is None:
-            self._texture = load(PLATFORM_TEXTURE_PATH)
+            self._texture: pygame.Surface = load(PLATFORM_TEXTURE_PATH)
         return self._texture
 
-    def move(self, game):
+    def move(self, game: Game) -> None:
         if self.rect.x < -500:
-            self.rect.x = self.rect.x = max(
+            self.rect.x = max(
                 platform.rect.x for platform in game.platforms
             ) + randrange(600, 1000)
 
             self.rect.y = randrange(400, 620)
-            self.initial_y = self.rect.y
+            self.initial_y: int = self.rect.y
 
         else:
             self.rect.x -= int(game.player.ax)
 
-    def check_hit_box(self, game):
+    def check_hit_box(self, game: Game) -> None:
+        """Check player hit box with the platform."""
         if any(
                 [
                     self.rect.collidepoint(
