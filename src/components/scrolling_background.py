@@ -4,7 +4,7 @@ import pygame
 
 from src.utils import load
 
-BACKGROUND_PATH: str = "src/assets/images/bg.png"
+BACKGROUND_PATH: str = "assets/images/bg.png"
 
 
 class ScrollingBackground:

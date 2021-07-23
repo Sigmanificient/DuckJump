@@ -1,6 +1,13 @@
 # PyCharm and Python
+__pycache__
 .idea
 venv
 
 # Archives
 *.zip
+
+
+# PyInstaller files
+build
+dist
+*.spec

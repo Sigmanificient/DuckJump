@@ -5,8 +5,8 @@ import pygame
 from src.utils import load
 
 
-PLAYER_SOUND_PATH: str = "src/assets/sounds/jump.wav"
-PLAYER_TEXTURE_PATH: str = "src/assets/images/duck3.png"
+PLAYER_SOUND_PATH: str = "assets/sounds/jump.wav"
+PLAYER_TEXTURE_PATH: str = "assets/images/duck3.png"
 
 Sound = pygame.mixer.Sound
 

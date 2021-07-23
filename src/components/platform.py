@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 from src.utils import load
 
 
-PLATFORM_TEXTURE_PATH: str = "src/assets/images/platform.png"
+PLATFORM_TEXTURE_PATH: str = "assets/images/platform.png"
 
 
 class Platform:

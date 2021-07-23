@@ -8,7 +8,7 @@ from src.components.player import Player
 from src.components.scrolling_background import ScrollingBackground
 from src.utils import load, get_text
 
-ASSETS_DIR: str = "src/assets/"
+ASSETS_DIR: str = "assets/"
 MUSIC_PATH: str = f"{ASSETS_DIR}musics/music.mp3"
 ICON_PATH: str = f"{ASSETS_DIR}images/icon.png"
 FONT_PATH: str = f"{ASSETS_DIR}fonts/setbackt.ttf"

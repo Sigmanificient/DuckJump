@@ -6,7 +6,7 @@ import pygame
 from src.components.player import Player
 from src.utils import load
 
-PLATFORM_TEXTURE_PATH: str = "src/assets/images/bullet-bill.png"
+PLATFORM_TEXTURE_PATH: str = "assets/images/bullet-bill.png"
 
 
 class Bullet:
