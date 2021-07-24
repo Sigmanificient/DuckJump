@@ -1,6 +1,6 @@
 # Duck-Jump-2 
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/?branch=archive-v2)
 ![GitHub all releases](https://img.shields.io/github/downloads/Sigmanificient/DuckJump/total)
 [![Build Status](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/build-status/master)
 
