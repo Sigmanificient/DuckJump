@@ -1,10 +1,8 @@
 # Duck-Jump-3 
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/?branch=master)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Sigmanificient/duck-jump-2.0)
-![GitHub repo size](https://img.shields.io/github/repo-size/Sigmanificient/duck-jump-2.0)
-![Lines of code](https://img.shields.io/tokei/lines/github/Sigmanificient/duck-jump-2.0)
-![GitHub last commit](https://img.shields.io/github/last-commit/Sigmanificient/duck-jump-2.0)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sigmanificient/DuckJump/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/DuckJump/?branch=master)
+![GitHub all releases](https://img.shields.io/github/downloads/Sigmanificient/DuckJump/total)
+[![Build Status](https://scrutinizer-ci.com/g/Sigmanificient/DuckJump/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/DuckJump/build-status/master)
 
 ## A rewrite
 Duck Jump is a game originally thought by a group of 4 persons.
