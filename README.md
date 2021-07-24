@@ -1,4 +1,4 @@
-# Duck-Jump-2 
+# Duck-Jump-3 
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sigmanificient/Duck-Jump-2.0/?branch=master)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Sigmanificient/duck-jump-2.0)
