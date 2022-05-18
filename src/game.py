@@ -3,7 +3,7 @@ import pygame
 from src.utils import load_texture
 
 
-ICON_PATH: str = f"icon/icon.ico"
+ICON_PATH: str = "icon/icon.ico"
 
 
 class Game:
